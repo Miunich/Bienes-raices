@@ -22,7 +22,7 @@ $consulta = "SELECT * FROM vendedores";
 $resultado = mysqli_query($db, $consulta);
 
 //Arreglo con mensajes de errores
-$errores = [];
+$errores = Propiedad::getErrores();
 
 $titulo = '';
 $precio = '';
@@ -35,77 +35,21 @@ $vendedor_id = '';
 //Ejecutar el codigo despues de que el usuario envie el formulario
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    // echo "<pre>";
-    // var_dump($_POST);
-    // echo "</pre>";
-
-    // echo "<pre>";
-    // var_dump($_FILES);
-    // echo "</pre>";
 
     $propiedad = new Propiedad($_POST);
-
-    $propiedad->guardar();
-
-    // debuguear($propiedad);
     
-
-
-    $titulo = mysqli_real_escape_string($db, $_POST['titulo']);
-    $precio = mysqli_real_escape_string($db, $_POST['precio']);
-    $descripcion = mysqli_real_escape_string($db, $_POST['descripcion']);
-    $habitaciones = mysqli_real_escape_string($db, $_POST['habitaciones']);
-    $wc = mysqli_real_escape_string($db, $_POST['wc']);
-    $estacionamiento = mysqli_real_escape_string($db, $_POST['estacionamiento']);
-    $vendedor_id = mysqli_real_escape_string($db, $_POST['vendedor']);
-    $creado = date('Y/m/d');
-
-    //Asignar files hacia una variable
-    $imagen = $_FILES['imagen'];
-
-
-
-    if (!$titulo) {
-        $errores[] = "Debes añadir un titulo";
-    }
-    if (!$precio) {
-        $errores[] = "Debes añadir un precio";
-    }
-
-    if (strlen($descripcion) < 50) {
-        $errores[] = "Debes añadir una descripción y no debe ser menor a 50 caracteres";
-    }
-    if (!$habitaciones) {
-        $errores[] = "Debes añadir el número de habitaciones";
-    }
-    if (!$wc) {
-        $errores[] = "Debes añadir el número de baños";
-    }
-    if (!$estacionamiento) {
-        $errores[] = "Debes añadir el número de estacionamientos";
-    }
-    if (!$vendedor_id) {
-        $errores[] = "Debes añadir un vendedor";
-    }
-
-    if (!$imagen['name'] || $imagen['error']) {
-        $errores[] = "La imagen es obligatoria";
-    }
-
-    //Validar por tamaño (1mb maximo)
-    $medida = 1000 * 1000;
-
-    if ($imagen['size'] > $medida) {
-        $errores[] = "La imagen es muy pesada";
-    }
-
+    $errores = $propiedad->validar();
+    
+   
    
 
     //Revisar que el arreglo de errores este vacio
     if (empty($errores)) {
-        //Subida de archivos
+        $propiedad->guardar();
 
-
+        //Asignar files hacia una variable
+        $imagen = $_FILES['imagen'];
+    
         //Crear carpeta
         $carpetaImagenes = '../../imagenes/';
         if (!is_dir($carpetaImagenes)) {
@@ -120,13 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         
 
-        // echo $query;
-        $resultado = mysqli_query($db, $query);
+        // // echo $query;
+        // $resultado = mysqli_query($db, $query);
 
-        if ($resultado) {
-            //Redireccionar al usuario
-            header('Location: /admin?resultado=1');
-        }
+        // if ($resultado) {
+        //     //Redireccionar al usuario
+        //     header('Location: /admin?resultado=1');
+        // }
+        header('Location: /admin?resultado=1');
     }
 }
 

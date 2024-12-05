@@ -13,5 +13,7 @@
             "email": "correo@correo.com"
         }
     ],
-    "require": {}
+    "require": {
+        "intervention/image": "^3.9"
+    }
 }

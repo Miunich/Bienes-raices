@@ -5,7 +5,7 @@ require '../../includes/funciones.php';
 $auth = estaAutenticado();
 
 
-if(!$auth){
+if (!$auth) {
     header('Location: /');
 }
 
@@ -13,7 +13,7 @@ if(!$auth){
 $id = $_GET["id"];
 $id = filter_var($id, FILTER_VALIDATE_INT);
 
-if(!$id){
+if (!$id) {
     header('Location: /admin');
 }
 
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo "<pre>";
     var_dump($_POST);
     echo "</pre>";
-  
+
 
     $titulo = mysqli_real_escape_string($db, $_POST['titulo']);
     $precio = mysqli_real_escape_string($db, $_POST['precio']);
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $habitaciones = mysqli_real_escape_string($db, $_POST['habitaciones']);
     $wc = mysqli_real_escape_string($db, $_POST['wc']);
     $estacionamiento = mysqli_real_escape_string($db, $_POST['estacionamiento']);
-    $vendedor_id = mysqli_real_escape_string($db, $_POST['vendedor']);
+    $vendedor_id = mysqli_real_escape_string($db, $_POST['vendedor_id']);
     $creado = date('Y/m/d');
 
     //Asignar files hacia una variable
@@ -76,24 +76,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!$precio) {
         $errores[] = "Debes añadir un precio";
     }
-    
+
     if (strlen($descripcion) < 50) {
         $errores[] = "Debes añadir una descripción y no debe ser menor a 50 caracteres";
-    } 
+    }
     if (!$habitaciones) {
         $errores[] = "Debes añadir el número de habitaciones";
-    } 
+    }
     if (!$wc) {
-        $errores[] = "Debes añadir el número de baños"; 
+        $errores[] = "Debes añadir el número de baños";
     }
     if (!$estacionamiento) {
         $errores[] = "Debes añadir el número de estacionamientos";
-    } 
+    }
     if (!$vendedor_id) {
         $errores[] = "Debes añadir un vendedor";
     }
 
-    
+
 
     //Validar por tamaño (1mb maximo)
     $medida = 1000 * 1000;
@@ -104,20 +104,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $imagenNombre = $_FILES['imagen']['name'];
     if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
         $imagen = $_FILES['imagen']; // Asignar el array completo del archivo subido
-    
+
         // Verificar el tamaño del archivo
         if ($imagen['size'] > $medida) {
             $errores[] = "La imagen es muy pesada";
         }
-    
+
         // Procesar la subida de la imagen (opcional)
         $rutaDestino = '../../imagenes/' . $imagen['name'];
         if (!move_uploaded_file($imagen['tmp_name'], $rutaDestino)) {
             $errores[] = "Error al guardar la imagen en el servidor";
         }
-    } 
-    
-    
+    }
+
+
     // Imprimir errores (si existen)
     if (!empty($errores)) {
         foreach ($errores as $error) {
@@ -129,38 +129,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
     //Revisar que el arreglo de errores este vacio
-    if(empty($errores)){
+    if (empty($errores)) {
         // //Subida de archivos
-        
-        if($imagenNombre){
-            
+
+        if ($imagenNombre) {
+
             //Eliminar la imagen previa
-            unlink('../../imagenes/' . $propiedad['imagen']);            
-        } 
-        else {
-                $imagenNombre = $propiedad['imagen'];
+            unlink('../../imagenes/' . $propiedad['imagen']);
+        } else {
+            $imagenNombre = $propiedad['imagen'];
+        }
 
-        } 
 
-        
         //Insertar en la base de datos
         $query = "UPDATE propiedades SET titulo = '$titulo', precio = '$precio', imagen = '$imagenNombre', descripcion = '$descripcion', habitaciones = '$habitaciones', wc = '$wc', estacionamiento = '$estacionamiento', vendedor_id = '$vendedor_id' WHERE id = $id";
-        
-        
+
+
         // echo $query;
         $resultado = mysqli_query($db, $query);
-    
-        if($resultado){
+
+        if ($resultado) {
             //Redireccionar al usuario
             header('Location: /admin?resultado=2');
         }
-
-    }   
-
-
+    }
 }
 
 include '../../includes/templates/header.php';
+$queryVendedores = "SELECT vendedor_id, nombre, apellido FROM vendedores";
+$resultadoVendedores = mysqli_query($db, $queryVendedores);
 ?>
 
 
@@ -169,14 +166,14 @@ include '../../includes/templates/header.php';
 
 
     <a href="/admin" class="boton boton-verde"> Volver</a>
-    <?php foreach($errores as $error): ?>
+    <?php foreach ($errores as $error): ?>
         <div class="alerta error">
             <?php echo $error; ?>
         </div>
     <?php endforeach; ?>
 
 
-    <form action="" class="formulario" method="POST"  enctype="multipart/form-data" >
+    <form action="" class="formulario" method="POST" enctype="multipart/form-data">
 
         <fieldset>
             <legend>Información General</legend>
@@ -185,7 +182,7 @@ include '../../includes/templates/header.php';
             <input type="text" id="titulo" name="titulo" placeholder="Titulo Propiedad" value="<?php echo $titulo; ?>">
 
             <label for="precio">Precio:</label>
-            <input type="number" id="precio" name="precio" placeholder="Precio Propiedad"value="<?php echo $precio; ?>">
+            <input type="number" id="precio" name="precio" placeholder="Precio Propiedad" value="<?php echo $precio; ?>">
 
             <label for="imagen">Imagen:</label>
             <input type="file" id="imagen" accept="image/jpeg, image/png" name="imagen">
@@ -200,7 +197,7 @@ include '../../includes/templates/header.php';
             <legend>Información Propiedad</legend>
 
             <label for="habitaciones">Habitaciones:</label>
-            <input type="number" id="habitaciones" name="habitaciones" placeholder="Ej. 3" min="1" max="9"value="<?php echo $habitaciones; ?>">
+            <input type="number" id="habitaciones" name="habitaciones" placeholder="Ej. 3" min="1" max="9" value="<?php echo $habitaciones; ?>">
             <label for="wc">Baños:</label>
             <input type="number" id="wc" name="wc" placeholder="Ej. 2" min="1" max="3" value="<?php echo $wc; ?>">
 
@@ -212,11 +209,13 @@ include '../../includes/templates/header.php';
         <fieldset>
             <legend>Vendedor</legend>
 
-            <select name="vendedor" id="vendedor" value="<?php echo $vendedor_id; ?>">
-                <option value="">-- Seleccione --</option>
-                <?php while($vendedor = mysqli_fetch_assoc($resultado)): ?>
-                    <option <?php echo $vendedor_id === $vendedor['id'] ? 'selected' : ''; ?> value="<?php echo $vendedor['id']; ?>"><?php echo $vendedor['nombre'] . " " . $vendedor['apellido']; ?></option>
-                <?php endwhile; ?>                
+            <select name="vendedor_id" id="vendedor">
+                <option value="" <?php echo empty($vendedor_id) ? 'selected' : ''; ?>>-- Seleccione --</option>
+                <?php while ($vendedor = mysqli_fetch_assoc($resultadoVendedores)) : ?>
+                    <option value="<?php echo $vendedor['vendedor_id']; ?>" <?php echo $vendedor_id == $vendedor['vendedor_id'] ? 'selected' : ''; ?>>
+                        <?php echo $vendedor['nombre'] . " " . $vendedor['apellido']; ?>
+                    </option>
+                <?php endwhile; ?>
             </select>
 
         </fieldset>
