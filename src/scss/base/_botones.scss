@@ -1,0 +1,19 @@
+.boton-amarillo{
+    @include boton($amarillo,inline-block);
+    background-color: $amarillo;
+}
+.boton-amarillo-block{
+    @include boton($amarillo,block);
+    background-color: $amarillo;
+}
+
+.boton-verde{
+    @include boton($verde,inline-block);
+    background-color: $verde;
+}
+
+.boton-rojo-block{
+    @include boton($rojo,block);
+    background-color: $rojo;
+    width: 100%;
+}
