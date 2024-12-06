@@ -31,7 +31,7 @@ class propiedad{
         $this->id = $args['id'] ?? null;
         $this->titulo = $args['titulo'] ?? '';
         $this->precio = $args['precio'] ?? '';
-        $this->imagen = $args['imagen'] ?? 'imagen.jpg';
+        $this->imagen = $args['imagen'] ?? '';
         $this->descripcion = $args['descripcion'] ?? '';
         $this->habitaciones = $args['habitaciones'] ?? '';
         $this->wc = $args['wc'] ?? '';
@@ -55,6 +55,8 @@ class propiedad{
 
 
         $resultado = self::$db->query($query);
+
+        return $resultado;
 
         // debuguear($resultado);
     }
@@ -109,5 +111,53 @@ class propiedad{
             self::$errores[] = "Debes añadir una imagen";
         }
         return self::$errores;
+    }
+
+    public function setImagen($imagen){
+        if($imagen){
+            $this->imagen = $imagen;
+        }
+    }
+
+    public static function all(){
+        $query = "SELECT * FROM propiedades";
+        
+        $resultado = self::consultarSQL($query);
+
+        return $resultado;
+        
+    }
+
+    public static function consultarSQL($query){
+        //Consultar la base de datos
+        $resultado = self::$db->query($query);
+
+        //Iterar los resultados
+        $array = [];
+        while($registro = $resultado->fetch_assoc()){
+            $array[] = self::crearObjeto($registro);
+
+        }
+    
+        //Liberar la memoria
+        $resultado->free();
+
+        //Retornar los resultados
+        return $array;
+
+
+    }
+
+    protected static function crearObjeto($registro){                
+        $objeto = new self;
+
+
+        foreach($registro as $key => $value){
+            if(property_exists($objeto, $key)){
+                $objeto->$key = $value;
+            }
+        }
+
+        return $objeto;
     }
 }
