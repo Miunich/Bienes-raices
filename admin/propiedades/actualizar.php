@@ -184,6 +184,7 @@ $resultadoVendedores = mysqli_query($db, $queryVendedores);
             <label for="precio">Precio:</label>
             <input type="number" id="precio" name="precio" placeholder="Precio Propiedad" value="<?php echo $precio; ?>">
 
+
             <label for="imagen">Imagen:</label>
             <input type="file" id="imagen" accept="image/jpeg, image/png" name="imagen">
             <img src="/imagenes/<?php echo $imagenPropiedad; ?>" alt="" class="imagen-small">
