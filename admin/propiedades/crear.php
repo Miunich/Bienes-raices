@@ -116,6 +116,3 @@ $resultadoVendedores = mysqli_query($db, $queryVendedores);
     <p class="copyright">Todos los derechos Reservador 2024 &copy;</p>
 </footer>
 <script src="/build/js/bundle.min.js"></script>
-</body>
-
-</html>
