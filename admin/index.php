@@ -118,7 +118,9 @@ if (!$resultadoConsulta) {
     <?php elseif ($resultado == '4'): ?>
         <p class="alerta error">Vendedor Borrado correctamente</p>
     <?php elseif ($resultado == '5'): ?>
-        <p class="alerta error">Vendedor Actualizado correctamente</p>
+        <p class="alerta exito">Vendedor Actualizado correctamente</p>
+    <?php elseif ($resultado == '6'): ?>
+        <p class="alerta exito">Vendedor Creado correctamente</p>
     <?php endif ?>
 
     <a href="/admin/propiedades/crear.php" class="boton boton-verde"> Nueva Propiedad</a>

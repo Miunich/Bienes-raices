@@ -3,23 +3,35 @@ require_once '../../includes/app.php';
 
 use App\Vendedor;
 
-estaAutenticado();
-$vendedor = new Vendedor;
+// Establecer conexión a la base de datos
+$db = conectarDB();
+Vendedor::setDB($db);
 
+// Verificar autenticación
+estaAutenticado();
+
+// Inicializar variables
+$vendedor = new Vendedor;
 $errores = Vendedor::getErrores();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    // crear una nueva instancia
+    // Crear una nueva instancia con los datos del formulario
     $vendedor = new Vendedor($_POST['vendedor']);
 
-    // Validar que no haya campos vacios
+    // Validar que no haya campos vacíos
     $errores = $vendedor->validar();
 
     if (empty($errores)) {
+        // Guardar en la base de datos
         $resultado = $vendedor->guardar();
-    }
 
+        if ($resultado) {
+            // Redirigir al usuario tras guardar
+            header('Location: /admin?resultado=6');
+            exit;
+        }
+    }
 }
 
 include '../../includes/templates/header.php';
@@ -27,17 +39,17 @@ include '../../includes/templates/header.php';
 <main class="contenedor seccion">
     <h1>Ingresar Vendedor</h1>
 
+    <a href="/admin" class="boton boton-verde">Volver</a>
 
-    <a href="/admin" class="boton boton-verde"> Volver</a>
+    <!-- Mostrar errores si los hay -->
     <?php foreach ($errores as $error): ?>
         <div class="alerta error">
-            <?php echo $error; ?>
+            <?php echo htmlspecialchars($error); ?>
         </div>
     <?php endforeach; ?>
 
-
-    <form action="" class="formulario" method="POST" action="/admin/vendedores/crear.php" enctype="multipart/form-data">
-
+    <!-- Formulario -->
+    <form action="/admin/vendedores/crear.php" class="formulario" method="POST" enctype="multipart/form-data">
         <?php include '../../includes/templates/formulario_vendedores.php'; ?>
         <input type="submit" value="Registrar Vendedor(a)" class="boton boton-verde">
     </form>
@@ -45,11 +57,8 @@ include '../../includes/templates/header.php';
 
 <footer class="footer seccion">
     <div class="contenedor contenedor-footer">
-        <?php
-        include '../../includes/templates/footer.php';
-        ?>
+        <?php include '../../includes/templates/footer.php'; ?>
     </div>
-
-    <p class="copyright">Todos los derechos Reservador 2024 &copy;</p>
+    <p class="copyright">Todos los derechos reservados 2024 &copy;</p>
 </footer>
 <script src="/build/js/bundle.min.js"></script>
