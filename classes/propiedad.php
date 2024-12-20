@@ -175,5 +175,13 @@ class propiedad{
 
         return array_shift($resultado);
     }
+    //obtiene determinado numero de propiedades
+    public static function get($cantidad){
+        $query = "SELECT * FROM propiedades LIMIT $cantidad";
+
+        $resultado = self::consultarSQL($query);
+
+        return $resultado;
+    }
 
 }
